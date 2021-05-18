@@ -1,18 +1,42 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+	<CartProduct></CartProduct>
+	<div class="grid grid-cols-2 md:grid-cols-4 grid-flow-row gap-x-3 gap-y-4">
+		<CardProduct v-for="(data, key) in item" v-bind:key="key" :data="data"></CardProduct>
+	</div>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import CardProduct from '@/components/CardProduct'
 
 export default {
-  name: 'Home',
-  components: {
-    HelloWorld
-  }
+	name: 'Home',
+	components: {
+		CardProduct,
+	},
+	computed: {
+		item: {
+			get(){
+				return this.$store.state.item
+			}
+		}
+	},
+	mounted(){
+		for (var i = 0; i < 8; i++) {
+			this.$store.commit('addData', {
+				name: 'item',
+				data: {
+				id: Math.floor(Math.random() * 1000000),
+				name: 'My Product',
+				img: '/emil-widlund-xrbbXIXAWY0-unsplash.jpg',
+				price: 1000000,
+				category: 'Computer',
+				description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Numquam rem, sunt nisi eum. At harum odit et id perferendis temporibus aliquid ratione omnis. Maxime cupiditate veniam modi nihil? Libero, corporis.'
+			}
+			})
+		}
+	}
 }
 </script>
