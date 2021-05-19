@@ -35,7 +35,7 @@
 				<span class="ml-2">{{users.displayName}}</span>
 			</a>
 			<router-link v-if="!users" class="p-4 text-black font-medium hover:bg-gray-100 border-l" to="/login">Login</router-link>
-			<a v-if="!users" class="p-4 text-black font-medium hover:bg-gray-100" href="/">Register</a>
+			<router-link v-if="!users" class="p-4 text-black font-medium hover:bg-gray-100" to="/register">Register</router-link>
 		</div>
 	</nav>
 	<div class="list-cart fixed right-0 top-0 w-60 bg-white mt-14 shadow-md overflow-auto border-l transition-all duration-300 mr-min-full z-10">

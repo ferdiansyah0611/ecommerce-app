@@ -10,6 +10,12 @@
 			</div>
 			<button type="submit" class="bg-blue-400 p-4 w-full text-white mt-3 focus:outline-none 
 			focus:ring focus:ring-blue-300 font-medium">REGISTER</button>
+			<div class="mt-4">
+			<h5>
+				<span>Have a account ? </span>
+				<router-link class="hover:underline" to="/login">Login</router-link>
+			</h5>
+		</div>
 		</form>
 	</div>
 </template>

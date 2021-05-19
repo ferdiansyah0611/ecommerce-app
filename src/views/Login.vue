@@ -8,9 +8,9 @@
 		</form>
 		<div class="border-b mb-2 mt-2 w-full"></div>
 		<button @click="signGoogle" type="button" class="bg-gray-400 p-4 w-full text-white focus:outline-none focus:ring focus:ring-gray-300 font-medium">LOGIN WITH GOOGLE</button>
-		<div class=" mt-4">
+		<div class="mt-4">
 			<h5>
-				<span class="font-medium">Don't have a account</span> ? 
+				<span>Don't have a account ? </span>
 				<router-link class="hover:underline" to="/register">Register</router-link>
 			</h5>
 		</div>
