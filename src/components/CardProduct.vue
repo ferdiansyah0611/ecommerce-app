@@ -8,16 +8,16 @@
 		<div class="flex flex-wrap mb-2 mt-2">
 			<div class="flex w-full">
 				<div class="w-2/5 font-medium text-xs md:text-sm">Category</div>
-				<a href="" class="w-3/5 hover:underline text-xs md:text-sm">{{data.category}}</a>
+				<router-link :to="{path: '/categories/' + data.category.toLowerCase()}" class="w-3/5 hover:underline text-xs md:text-sm">{{data.category}}</router-link>
 			</div>
 			<div class="flex w-full">
 				<div class="w-2/5 font-medium text-xs md:text-sm">Price</div>
 				<p class="w-3/5 text-xs md:text-sm">Rp. {{data.price}}</p>
 			</div>
 		</div>
-		<div class="flex space-x-1">
-			<button @click="addCart" class="p-2 w-1/2 bg-blue-500 hover:bg-blue-600 transition-all duration-300 text-white text-sm md:text-base font-medium focus:outline-none focus:ring focus:ring-blue-500">Add to cart</button>
-			<button class="p-2 w-1/2 bg-gray-500 hover:bg-gray-600 transition-all duration-300 text-white text-sm md:text-base font-medium focus:outline-none focus:ring focus:ring-gray-500">Buy Now</button>
+		<div class="flex flex-wrap">
+			<button @click="addCart" class="p-2 w-full lg:w-1/2 bg-blue-500 hover:bg-blue-600 transition-all duration-300 text-white text-sm md:text-base font-medium focus:outline-none focus:ring focus:ring-blue-500">Add to cart</button>
+			<button class="p-2 w-full lg:w-1/2 bg-gray-500 hover:bg-gray-600 transition-all duration-300 text-white text-sm md:text-base font-medium focus:outline-none focus:ring focus:ring-gray-500">Buy Now</button>
 		</div>
 	</div>
 </template>
@@ -29,9 +29,6 @@ export default{
 		return{
 			status: false
 		}
-	},
-	created(){
-		document.title = 'The Best Ecommerce Platform | 0611 Store'
 	},
 	methods: {
 		addCart(){
