@@ -8,6 +8,6 @@ import store from './store'
 var app
 auth.onAuthStateChanged(() => {
 	if(!app){
-		createApp(App).use(store).use(router).use(router).mount('#app')
+		app = createApp(App).use(store).use(router).use(router).mount('#app')
 	}
 })

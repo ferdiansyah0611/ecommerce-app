@@ -327,6 +327,7 @@ export default{
 		logout(e){
 			e.preventDefault()
 			auth.signOut()
+			window.location.reload(false);
 		}
 	}
 }

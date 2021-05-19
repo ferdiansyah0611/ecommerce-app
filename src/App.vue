@@ -1,9 +1,11 @@
 <template>
-	<Navbar></Navbar>
-	<div class="p-3 mt-14">
-		<router-view/>
+	<div>
+		<Navbar></Navbar>
+		<div class="p-3 mt-14">
+			<router-view/>
+		</div>
+		<Footer></Footer>
 	</div>
-	<Footer></Footer>
 </template>
 <script>
 import Navbar from '@/components/Navbar'
