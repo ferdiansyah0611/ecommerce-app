@@ -16,6 +16,9 @@ export default {
 	components: {
 		CardProduct,
 	},
+	created(){
+		document.title = 'The Best Ecommerce Platform | 0611 Store'
+	},
 	computed: {
 		item: {
 			get(){
