@@ -1,10 +1,8 @@
 <template>
-  <div>
 	<CartProduct></CartProduct>
 	<div class="grid grid-cols-2 md:grid-cols-4 grid-flow-row gap-x-3 gap-y-4">
 		<CardProduct v-for="(data, key) in item" v-bind:key="key" :data="data"></CardProduct>
 	</div>
-  </div>
 </template>
 
 <script>
