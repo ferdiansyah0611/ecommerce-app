@@ -1,12 +1,33 @@
 import { createStore } from 'vuex'
-import {db, storage} from '@/firebase'
+import {db, storage, firebase} from '@/firebase'
+
+window.db = db
 
 export default createStore({
   state: {
-	cart: [],
-  item: []
+    cart: [],
+    item: [],
+    categories: []
   },
   mutations: {
+    getProducts(state, data){
+      const products = db.collection('products')
+      if(data.reset){
+        state.item = []
+        products.get().then(res => res.forEach(data => state.item = [...state.item, data.data()]))
+      }else{
+        products.get().then(res => res.forEach(data => state.item = [...state.item, data.data()]))
+      }
+    },
+    getCategory(state, data){
+      const categories = db.collection('categories')
+      if(data.reset){
+        state.categories = []
+        categories.get().then(res => res.forEach(data => state.categories = [...state.categories, data.data()]))
+      }else{
+        categories.get().then(res => res.forEach(data => state.categories = [...state.categories, data.data()]))
+      }
+    },
     addCart(state, data){
       state.cart = [...state.cart, data]
     },
@@ -22,31 +43,43 @@ export default createStore({
     createProduct(state, data){
       let add, filePreview, listFilePreview = []
       add = db.collection('products').doc()
-      filePreview = () => {
-        if(data.imgPreview.length >= 1){
-          data.imgPreview.forEach((data) => {
-            const upload = storage.ref(`/images/${data.name}`).put(data)
-            upload.on('state_changed', status => {
-              var progress = (status.bytesTransferred / status.totalBytes) * 100;
-              console.log('Progress ' + progress + '%')
-            }, e => console.log(e), () => {
-              upload.snapshot.ref.getDownloadURL().then(function(url) {
-                listFilePreview.push(url)
+      const imgupload = storage.ref(`/images/${data.img.name}`).put(data.img)
+      imgupload.then(() => {
+        imgupload.snapshot.ref.getDownloadURL().then(function(response) {
+          data.img = response
+          filePreview = () => {
+            if(data.imgPreview.length >= 1){
+              var keyImgPreview = 0;
+              data.imgPreview.forEach((file) => {
+                var upload = storage.ref(`/images/${file.name}`).put(file)
+                upload.then(() => {
+                  upload.snapshot.ref.getDownloadURL().then(function(url) {
+                    console.log(url)
+                    keyImgPreview += 1
+                    listFilePreview = [...listFilePreview, url]
+                    if(keyImgPreview === data.imgPreview.length){
+                      var product = db.collection('products').doc(add.id)
+                      product.update({
+                        imgPreview: listFilePreview
+                      })
+                    }
+                  })
+                })
               })
-            })
-          })
-        }
-      }
-      filePreview()
-      add.set({
-        id: add.id,
-        name: data.name,
-        price: data.price,
-        stock: data.stock,
-        img: data.img,
-        categories: data.categories,
-        imgPreview: listFilePreview,
-        created: db.FieldValue.serverTimestamp()
+              add.set({
+                id: add.id,
+                name: data.name,
+                price: data.price,
+                stock: data.stock,
+                img: data.img,
+                categories: data.categories,
+                imgPreview: listFilePreview,
+                created: firebase.firestore.FieldValue.serverTimestamp()
+              })
+            }
+          }
+          filePreview()
+        })
       })
     }
   },
