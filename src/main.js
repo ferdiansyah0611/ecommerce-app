@@ -9,5 +9,6 @@ var app
 auth.onAuthStateChanged(() => {
 	if(!app){
 		app = createApp(App).use(store).use(router).use(router).mount('#app')
+		window.__VUE_DEVTOOLS_GLOBAL_HOOK__.Vue = app
 	}
 })
