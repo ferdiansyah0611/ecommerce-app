@@ -9,16 +9,24 @@
 			<a href="/" class="hidden md:block p-4 hover:bg-gray-100 font-medium">Best Product</a>
 		</div>
 		<div v-if="users" class="menu-desktop fixed right-0 top-0 mt-14 bg-white shadow border hidden">
-			<div class="flex flex-wrap">
-				<a class="w-auto flex hover:bg-gray-100 cursor-pointer transition-all duration-300 p-3">
-					<ShoppingCartIcon class="h-6"></ShoppingCartIcon>
-					<span class="font-medium ml-3">My Payment</span>
+			<div class="flex flex-wrap w-52">
+				<router-link to="/dashboard" class="w-full flex hover:bg-gray-100 cursor-pointer transition-all duration-300 p-3">
+					<TrendingUpIcon class="h-6"></TrendingUpIcon>
+					<span class="font-medium ml-3">Dashboard</span>
+				</router-link>
+				<a class="w-full flex hover:bg-gray-100 cursor-pointer transition-all duration-300 p-3">
+					<CreditCardIcon class="h-6"></CreditCardIcon>
+					<span class="font-medium ml-3">Transaction</span>
 				</a>
-				<a class="w-auto flex hover:bg-gray-100 cursor-pointer transition-all duration-300 p-3 border-b">
+				<a class="w-full flex hover:bg-gray-100 cursor-pointer transition-all duration-300 p-3">
+					<CurrencyDollarIcon class="h-6"></CurrencyDollarIcon>
+					<span class="font-medium ml-3">Payment</span>
+				</a>
+				<a class="w-full flex hover:bg-gray-100 cursor-pointer transition-all duration-300 p-3 border-b">
 					<UserIcon class="h-6"></UserIcon>
-					<span class="font-medium ml-3">My Profile</span>
+					<span class="font-medium ml-3">Profile</span>
 				</a>
-				<div @click="logout" class="w-auto flex hover:bg-gray-100 cursor-pointer transition-all duration-300 p-3">
+				<div @click="logout" class="w-full flex hover:bg-gray-100 cursor-pointer transition-all duration-300 p-3">
 					<LogoutIcon class="h-6"></LogoutIcon>
 					<span class="font-medium ml-3">Logout</span>
 				</div>
@@ -54,13 +62,21 @@
 				<img class="w-6 rounded-full" :src="users.photoURL" alt="">
 				<span class="font-medium ml-3">{{users.displayName}}</span>
 			</div>
+			<router-link to="/dashboard" v-if="users" class="w-full hover:bg-gray-100 cursor-pointer transition-all duration-300 p-3 menu-user hidden">
+				<TrendingUpIcon class="h-6"></TrendingUpIcon>
+				<span class="font-medium ml-3">Dashboard</span>
+			</router-link>
 			<a v-if="users" class="w-full hover:bg-gray-100 cursor-pointer transition-all duration-300 p-3 menu-user hidden">
-				<ShoppingCartIcon class="h-6"></ShoppingCartIcon>
-				<span class="font-medium ml-3">My Payment</span>
+				<CreditCardIcon class="h-6"></CreditCardIcon>
+				<span class="font-medium ml-3">Transaction</span>
+			</a>
+			<a v-if="users" class="w-full hover:bg-gray-100 cursor-pointer transition-all duration-300 p-3 menu-user hidden">
+				<CurrencyDollarIcon class="h-6"></CurrencyDollarIcon>
+				<span class="font-medium ml-3">Payment</span>
 			</a>
 			<a v-if="users" class="w-full hover:bg-gray-100 cursor-pointer transition-all duration-300 p-3 border-b menu-user hidden">
 				<UserIcon class="h-6"></UserIcon>
-				<span class="font-medium ml-3">My Profile</span>
+				<span class="font-medium ml-3">Profile</span>
 			</a>
 			<router-link to="/" class="w-full flex hover:bg-gray-100 cursor-pointer transition-all duration-300 p-3">
 				<HomeIcon class="h-6"></HomeIcon>
@@ -97,9 +113,9 @@
 				<h4 class="font-bold mt-1 ml-2">Category</h4>
 			</div>
 			<div class="flex flex-wrap">
-				<router-link class="w-full flex hover:bg-gray-100 cursor-pointer transition-all duration-300 p-3" v-for="(data, key) in category" v-bind:key="key"  :to="{path: '/categories/' + data.toLowerCase()}">
+				<router-link class="w-full flex hover:bg-gray-100 cursor-pointer transition-all duration-300 p-3" v-for="(data, key) in categories" v-bind:key="key"  :to="{path: '/categories/' + data.name.toLowerCase()}">
 					<FilterIcon class="h-6"></FilterIcon>
-					<span class="font-medium ml-3">{{data}}</span>
+					<span class="font-medium ml-3">{{data.name}}</span>
 				</router-link>
 			</div>
 		</div>
@@ -167,7 +183,10 @@ import {
 	ChartPieIcon,
 	FilterIcon,
 	ChevronLeftIcon,
-	UserIcon
+	UserIcon,
+	TrendingUpIcon,
+	CurrencyDollarIcon,
+	CreditCardIcon
 } from '@heroicons/vue/outline'
 export default{
 	name: 'Navbar',
@@ -184,7 +203,10 @@ export default{
 		ChartPieIcon,
 		FilterIcon,
 		ChevronLeftIcon,
-		UserIcon
+		UserIcon,
+		TrendingUpIcon,
+		CurrencyDollarIcon,
+		CreditCardIcon
 	},
 	data(){
 		return{
@@ -208,6 +230,11 @@ export default{
 		users: {
 			get(){
 				return auth.currentUser
+			}
+		},
+		categories: {
+			get(){
+				return this.$store.state.categories
 			}
 		}
 	},

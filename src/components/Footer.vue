@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-wrap bg-white p-5 text-black mb-12">
+	<div class="flex flex-wrap bg-white p-5 text-black">
 		<div class="w-full md:w-1/2">
 			<p>&copy; {{new Date().getFullYear()}} <a href="/" class="hover:underline">ferdiansyah0611</a></p>
 		</div>

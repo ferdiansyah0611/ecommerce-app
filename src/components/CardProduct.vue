@@ -1,5 +1,5 @@
 <template>
-	<div class="border p-2">
+	<div class="border p-2 bg-white">
 		<h5 class="font-bold text-center mb-2">
 			<router-link :to="{path: '/products/' + data.id}" class="hover:underline">{{data.name}}</router-link>
 		</h5>
@@ -8,7 +8,7 @@
 		<div class="flex flex-wrap mb-2 mt-2">
 			<div class="flex w-full">
 				<div class="w-2/5 font-medium text-xs md:text-sm">Category</div>
-				<router-link :to="{path: '/categories/' + data.category.toLowerCase()}" class="w-3/5 hover:underline text-xs md:text-sm">{{data.category}}</router-link>
+				<router-link :to="{path: '/categories/' + data.categories.toLowerCase()}" class="w-3/5 hover:underline text-xs md:text-sm">{{data.categories}}</router-link>
 			</div>
 			<div class="flex w-full">
 				<div class="w-2/5 font-medium text-xs md:text-sm">Price</div>
