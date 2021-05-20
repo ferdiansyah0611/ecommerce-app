@@ -14,6 +14,10 @@ export default{
 	components: {
 		Navbar,
 		Footer
+	},
+	created(){
+		document.body.classList.add('bg-gray-100')
+		this.$store.commit('getCategory', {})
 	}
 }
 </script>
