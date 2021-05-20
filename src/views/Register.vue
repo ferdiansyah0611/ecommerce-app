@@ -1,5 +1,5 @@
 <template>
-	<div class="border mx-auto w-full sm:w-1/2 md:w-1/3 p-2 mb-20">
+	<div class="border mx-auto bg-white rounded w-full sm:w-1/2 md:w-1/3 p-2 mb-20">
 		<h5 class="font-bold text-2xl text-center mb-5 mt-5">Register App</h5>
 		<form @submit="signUp" class="flex flex-wrap">
 			<input v-model="email" class="p-4 w-full border mt-3 focus:outline-none" type="email" placeholder="Email...">

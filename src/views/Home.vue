@@ -1,5 +1,4 @@
 <template>
-	<CartProduct></CartProduct>
 	<div class="grid grid-cols-2 md:grid-cols-4 grid-flow-row gap-x-3 gap-y-4">
 		<CardProduct v-for="(data, key) in item" v-bind:key="key" :data="data"></CardProduct>
 	</div>
@@ -25,7 +24,9 @@ export default {
 		}
 	},
 	mounted(){
-		for (var i = 0; i < 8; i++) {
+		this.$store.commit('getProducts', {reset: true})
+		window.store = this.$store
+		/*for (var i = 0; i < 8; i++) {
 			this.$store.commit('addData', {
 				name: 'item',
 				data: {
@@ -37,7 +38,7 @@ export default {
 				description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Numquam rem, sunt nisi eum. At harum odit et id perferendis temporibus aliquid ratione omnis. Maxime cupiditate veniam modi nihil? Libero, corporis.'
 			}
 			})
-		}
+		}*/
 	}
 }
 </script>

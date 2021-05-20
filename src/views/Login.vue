@@ -1,5 +1,5 @@
 <template>
-	<div class="border mx-auto w-full sm:w-1/2 md:w-1/3 p-2 mb-6">
+	<div class="border bg-white rounded mx-auto w-full sm:w-1/2 md:w-1/3 p-8 sm:p-12 mb-6">
 		<h5 class="font-bold text-2xl text-center mb-5 mt-5">Login App</h5>
 		<form @submit="signEmail" class="flex flex-wrap">
 			<input v-model="email" class="p-4 w-full border mt-3 focus:outline-none" type="email" placeholder="Email...">
@@ -17,7 +17,7 @@
 	</div>
 </template>
 <script>
-import {auth, firebase} from '@/firebase'
+import {auth, firebase, db} from '@/firebase'
 export default{
 	name: 'Login',
 	data(){
@@ -42,9 +42,16 @@ export default{
 		signGoogle(e){
 			e.preventDefault()
 			let provider = new firebase.auth.GoogleAuthProvider()
-			firebase.auth().signInWithPopup(provider).then(() => {
-				this.$router.push({name: 'Home'})
-				window.location.reload(false);
+			firebase.auth().signInWithPopup(provider).then((res) => {
+				db.collection('users').doc(res.user.uid).set({
+					id: res.user.uid,
+					name: res.user.displayName,
+					email: res.user.email,
+					photo: res.user.photoURL
+				}).then(() => {
+					this.$router.push({name: 'Home'})
+					window.location.reload(false);
+				})
 			})
 		}
 	}
