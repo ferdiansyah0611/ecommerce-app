@@ -22,9 +22,6 @@ const firestore 	= firebase.firestore()
 const db 			= firebase.firestore()
 const storage 		= firebase.storage()
 const user 			= firebase.auth().currentUser
-const getProduct	= () => {
-
-}
 
 export{
 	auth,
@@ -32,6 +29,5 @@ export{
 	db,
 	storage,
 	user,
-	firebase,
-	getProduct
+	firebase
 }
