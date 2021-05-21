@@ -11,7 +11,7 @@ export default createStore({
   },
   mutations: {
     getProducts(state, data){
-      const products = db.collection('products')
+      const products = db.collection('products').orderBy('created', 'desc').endAt(8)
       if(data.reset){
         state.item = []
         products.get().then(res => res.forEach(data => state.item = [...state.item, data.data()]))
@@ -54,7 +54,6 @@ export default createStore({
                 var upload = storage.ref(`/images/${file.name}`).put(file)
                 upload.then(() => {
                   upload.snapshot.ref.getDownloadURL().then(function(url) {
-                    console.log(url)
                     keyImgPreview += 1
                     listFilePreview = [...listFilePreview, url]
                     if(keyImgPreview === data.imgPreview.length){
@@ -73,6 +72,7 @@ export default createStore({
                 stock: data.stock,
                 img: data.img,
                 categories: data.categories,
+                description: data.description,
                 imgPreview: listFilePreview,
                 created: firebase.firestore.FieldValue.serverTimestamp()
               })
