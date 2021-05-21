@@ -49,7 +49,7 @@
 				</div>
 				<div class="flex flex-wrap p-4">
 					<form v-if="auth" @submit="createComment" class="w-full">
-						<input @click="changeFile" name="imageComment" type="file" class="hidden">
+						<input @change="changeFile" name="imageComment" type="file" class="hidden">
 						<textarea v-model="comments" class="w-full p-3 focus:outline-none" placeholder="Type here..."></textarea>
 						<button @click="open" type="button" class="p-3 bg-gray-200 font-bold focus:outline-none focus:ring focus:ring-gray-50">Attach Image</button>
 						<button type="submit" class="p-3 bg-blue-400 font-bold text-white focus:outline-none focus:ring focus:ring-blue-300 ml-2">Send</button>
@@ -60,11 +60,14 @@
 						<h5>Comment Empty</h5>
 					</div>
 					<div v-else class="flex py-3 border-b" v-for="(data, key) in comment" v-bind:key="key">
-						<img class="rounded-full h-24 w-24" :src="data.avatar" alt="">
+						<img class="rounded-full w-12 h-12 sm:h-24 sm:w-24" :src="data.avatar" alt="">
 						<div class="w-4/5 pl-3 pr-3 pb-3">
 							<h5 class="font-bold hover:underline cursor-pointer">{{data.name}}</h5>
 							<p>{{data.comments}}</p>
-							<img v-if="data.img" class="w-full md:w-1/2" :src="data.img" alt="image">
+							<img v-if="data.img" class="w-full md:w-1/2 mt-2" :src="data.img" alt="image">
+							<span class="text-sm font-light mt-2">{{new Date(data.created.seconds * 1000).getFullYear()}}/{{new Date(data.created.seconds * 1000).getMonth()}}/{{new Date(data.created.seconds * 1000).getDate()}} 
+								{{new Date(data.created.seconds * 1000).getHours()}}:{{new Date(data.created.seconds * 1000).getSeconds()}}
+							</span>
 						</div>
 					</div>
 				</div>
@@ -90,7 +93,7 @@ export default{
 			userComment: [],
 			comment: [],
 			comments: '',
-			img: {},
+			img: null,
 			product_id: ''
 		}
 	},
@@ -99,27 +102,25 @@ export default{
 	},
 	mounted(){
 		db.collection('products').doc(this.$route.params.id).get().then(result => this.product = result.data())
-		db.collection('comments').where('product_id', '==', this.$route.params.id).get().then(result => {
-			let count = 0, dataUserId = []
-			console.log(result)
-			result.forEach((res) => {
-				let data = res.data()
-				count += 1
-				dataUserId.push(data.user_id)
-				console.log(count, result.size)
-				db.collection('users').where('id', '==', data.user_id).get().then(resultUser => {
-					resultUser.forEach((dataUser) => {
-						console.log(dataUser)
-						data.avatar = dataUser.data().photo
-						data.name = dataUser.data().name
-						this.comment = [...this.comment, data]
+		this.fetchComment()
+	},
+	methods: {
+		fetchComment(){
+			db.collection('comments').where('product_id', '==', this.$route.params.id).get().then(result => {
+				this.comment = []
+				result.forEach((res) => {
+					let data = res.data()
+					db.collection('users').where('id', '==', data.user_id).get().then(resultUser => {
+						resultUser.forEach((dataUser) => {
+							console.log(dataUser)
+							data.avatar = dataUser.data().photo
+							data.name = dataUser.data().name
+							this.comment = [...this.comment, data].reverse()
+						})
 					})
 				})
 			})
-		})
-
-	},
-	methods: {
+		},
 		addCart(){
 			if(!this.txtAddCart){
 				this.$store.commit('addCart', this.product)
@@ -160,23 +161,21 @@ export default{
 							}).then(() => {
 								this.comments = ''
 								this.img = ''
+								this.fetchComment()
 							})
 						})
 					})
 				}else{
-					const data = {
+					comments.set({
 						id: comments.id,
 						product_id: this.product_id,
 						user_id: auth.currentUser.uid,
 						comments: this.comments,
 						created: firebase.firestore.FieldValue.serverTimestamp()
-					}
-					comments.set(data).then(() => {
+					}).then(() => {
 						this.comments = ''
 						this.img = ''
-						data.name = auth.currentUser.displayName
-						data.avatar = auth.currentUser.photoURL
-						this.comment.push(data)
+						this.fetchComment()
 					})
 				}
 		},
