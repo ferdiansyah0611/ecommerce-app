@@ -48,7 +48,7 @@
 					<h4 class="font-bold text-xl p-4">Comments</h4>
 				</div>
 				<div class="flex flex-wrap p-4">
-					<form @submit="createComment" class="w-full">
+					<form v-if="auth" @submit="createComment" class="w-full">
 						<input @click="changeFile" name="imageComment" type="file" class="hidden">
 						<textarea v-model="comments" class="w-full p-3 focus:outline-none" placeholder="Type here..."></textarea>
 						<button @click="open" type="button" class="p-3 bg-gray-200 font-bold focus:outline-none focus:ring focus:ring-gray-50">Attach Image</button>
@@ -56,25 +56,15 @@
 					</form>
 				</div>
 				<div class="pl-4 pr-4 pb-4 max-h-screen overflow-auto">
-					<div class="flex py-3 border-b">
-						<img class="rounded-full h-24 w-24" :src="product.img" alt="">
-						<div class="w-4/5 pl-3 pr-3 pb-3">
-							<h5 class="font-bold hover:underline cursor-pointer">Ferdiansyah</h5>
-							<p>My Comments</p>
-						</div>
+					<div class="text-center p-10 font-medium" v-if="comment.length == 0">
+						<h5>Comment Empty</h5>
 					</div>
-					<div class="flex py-3 border-b">
-						<img class="rounded-full h-24 w-24" :src="product.img" alt="">
+					<div v-else class="flex py-3 border-b" v-for="(data, key) in comment" v-bind:key="key">
+						<img class="rounded-full h-24 w-24" :src="data.avatar" alt="">
 						<div class="w-4/5 pl-3 pr-3 pb-3">
-							<h5 class="font-bold hover:underline cursor-pointer">Ferdiansyah</h5>
-							<p>My Comments</p>
-						</div>
-					</div>
-					<div class="flex py-3 border-b" v-for="(data, key) in comment" v-bind:key="key">
-						<img class="rounded-full h-24 w-24" :src="data.img" alt="">
-						<div class="w-4/5 pl-3 pr-3 pb-3">
-							<h5 class="font-bold hover:underline cursor-pointer">{{data.user_id}}</h5>
+							<h5 class="font-bold hover:underline cursor-pointer">{{data.name}}</h5>
 							<p>{{data.comments}}</p>
+							<img v-if="data.img" class="w-full md:w-1/2" :src="data.img" alt="image">
 						</div>
 					</div>
 				</div>
@@ -96,9 +86,11 @@ export default{
 			product: {
 				imgPreview: []
 			},
+			auth: auth.currentUser,
+			userComment: [],
 			comment: [],
 			comments: '',
-			img: '',
+			img: {},
 			product_id: ''
 		}
 	},
@@ -107,7 +99,25 @@ export default{
 	},
 	mounted(){
 		db.collection('products').doc(this.$route.params.id).get().then(result => this.product = result.data())
-		db.collection('comments').where('product_id', '==', this.$route.params.id).get().then(result => result.forEach((data) => this.comment = [...this.comment, data.data()]))
+		db.collection('comments').where('product_id', '==', this.$route.params.id).get().then(result => {
+			let count = 0, dataUserId = []
+			console.log(result)
+			result.forEach((res) => {
+				let data = res.data()
+				count += 1
+				dataUserId.push(data.user_id)
+				console.log(count, result.size)
+				db.collection('users').where('id', '==', data.user_id).get().then(resultUser => {
+					resultUser.forEach((dataUser) => {
+						console.log(dataUser)
+						data.avatar = dataUser.data().photo
+						data.name = dataUser.data().name
+						this.comment = [...this.comment, data]
+					})
+				})
+			})
+		})
+
 	},
 	methods: {
 		addCart(){
@@ -135,8 +145,9 @@ export default{
 		createComment(e){
 			e.preventDefault()
 				const comments = db.collection('comments').doc()
+				console.log(this.img)
 				if(this.img){
-					const upload = storage.ref(`images/${this.img.name}`).put(this.img)
+					const upload = storage.ref(`/images/${this.img.name}`).put(this.img)
 					upload.then(() => {
 						upload.snapshot.ref.getDownloadURL().then((url) => {
 							comments.set({
@@ -163,6 +174,8 @@ export default{
 					comments.set(data).then(() => {
 						this.comments = ''
 						this.img = ''
+						data.name = auth.currentUser.displayName
+						data.avatar = auth.currentUser.photoURL
 						this.comment.push(data)
 					})
 				}

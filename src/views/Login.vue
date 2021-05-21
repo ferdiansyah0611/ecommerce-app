@@ -47,7 +47,8 @@ export default{
 					id: res.user.uid,
 					name: res.user.displayName,
 					email: res.user.email,
-					photo: res.user.photoURL
+					photo: res.user.photoURL,
+					role: 'users'
 				}).then(() => {
 					this.$router.push({name: 'Home'})
 					window.location.reload(false);
