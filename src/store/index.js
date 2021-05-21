@@ -7,7 +7,11 @@ export default createStore({
   state: {
     cart: [],
     item: [],
-    categories: []
+    categories: [],
+    pagination: {
+      start: 0,
+      end: 8
+    }
   },
   mutations: {
     getProducts(state, data){
@@ -17,6 +21,26 @@ export default createStore({
         products.get().then(res => res.forEach(data => state.item = [...state.item, data.data()]))
       }else{
         products.get().then(res => res.forEach(data => state.item = [...state.item, data.data()]))
+      }
+    },
+    nextProduct(state){
+      console.log(state.pagination.start + 8)
+      if(!(state.item.length <= 7)){
+        const products = db.collection('products').orderBy('created', 'desc').startAt(state.pagination.start += 8).endAt(state.pagination.end += 8)
+        products.get().then(res => {
+          state.item = []
+          res.forEach(data => state.item = [...state.item, data.data()])
+        })
+      }
+    },
+    previousProduct(state){
+      console.log(state.pagination.start - 8)
+      if((state.pagination.start - 8) >= 0){
+        const products = db.collection('products').orderBy('created', 'desc').startAt(state.pagination.start -= 8).endAt(state.pagination.end -= 8)
+        products.get().then(res => {
+          state.item = []
+          res.forEach(data => state.item = [...state.item, data.data()])
+        })
       }
     },
     getCategory(state, data){
