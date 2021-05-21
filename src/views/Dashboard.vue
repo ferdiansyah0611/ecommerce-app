@@ -8,16 +8,17 @@
 				<div class="edit p-5 bg-black bg-opacity-75 w-full h-screen overflow-auto fixed left-0 top-0 z-30 overflow-auto hidden">
 					<div class="bg-white rounded w-full sm:w-1/3 mx-auto p-4 mt-16">
 						<h5 class="font-medium mb-4">Edit Data</h5>
-						<form @submit="edit">
+						<form @submit="editProduct">
 							<img :src="edit.img" alt="photo">
-							<input @change="openImg" name="img" type="file" class="hidden">
-							<input @change="openImg" name="imgPreview" type="file" class="hidden" multiple>
+							<input @change="openImg" name="edit.img" type="file" class="hidden">
+							<input @change="openImg" name="edit.imgPreview" type="file" class="hidden" multiple>
 							<input v-model="edit.name" class="p-3 text-sm md:text-base border w-full focus:outline-none mt-3" type="text" placeholder="Name product">
 							<input v-model="edit.price" class="p-3 text-sm md:text-base border w-full focus:outline-none mt-3" type="number" placeholder="Price">
 							<input v-model="edit.stock" class="p-3 text-sm md:text-base border w-full focus:outline-none mt-3" type="number" placeholder="Stock">
 							<textarea v-model="edit.description" class="p-3 text-sm md:text-base border w-full focus:outline-none mt-3" placeholder="Description"></textarea>
 							<select @change="changeCategory" class="p-3 text-sm md:text-base border bg-white w-full focus:outline-none">
-								<option value="" disabled selected>Select Category</option>
+								<option value="" disabled>Select Category</option>
+								<option v-if="edit.categories" :value="edit.categories" selected>{{edit.categories}} (Default)</option>
 								<option v-for="(data, key) in categories" v-bind:key="key" :value="data.name">{{data.name}}</option>
 							</select>
 							<button @click="open" data-type="img" type="button" class="p-3 text-sm md:text-base bg-gray-400 w-full font-medium focus:outline-none focus:ring focus:ring-gray-300 mt-1 text-white">Upload Images</button>
@@ -84,7 +85,7 @@
 							<td class="border text-xs sm:text-base p-2">Rp. {{data.price}}</td>
 							<td class="border text-xs sm:text-base p-2">{{data.stock}}</td>
 							<td class="border text-xs sm:text-base p-2">
-								{{new Date(data.created.seconds * 1000).getFullYear()}}-{{new Date(data.created.seconds * 1000).getMonth()}}-{{new Date(data.created.seconds * 1000).getDate()}} 
+								{{new Date(data.created.seconds * 1000).getFullYear()}}/{{new Date(data.created.seconds * 1000).getMonth()}}/{{new Date(data.created.seconds * 1000).getDate()}} 
 								{{new Date(data.created.seconds * 1000).getHours()}}:{{new Date(data.created.seconds * 1000).getSeconds()}}
 							</td>
 							<td class="p-2 text-xs sm:text-base flex justify-center space-x-1">
@@ -105,7 +106,7 @@
 	</div>
 </template>
 <script>
-import {db, auth} from '@/firebase'
+import {db, auth, storage} from '@/firebase'
 export default{
 	name: 'Dashbbard',
 	data(){
@@ -113,12 +114,16 @@ export default{
 			products: [],
 			keyDelete: null,
 			edit: {
+				id: '',
 				name: '',
 				price: '',
 				stock: '',
 				description: '',
-				img: ''
+				img: '',
+				categories: ''
 			},
+			editImg: null,
+			editImgPreview: [],
 			auth: auth.currentUser
 		}
 	},
@@ -126,7 +131,6 @@ export default{
 		db.collection('products').get().then(result => {
 			result.forEach(data => {
 				this.products.push(data.data())
-				console.log(data.data())
 			})
 		})
 	},
@@ -139,12 +143,47 @@ export default{
 	},
 	methods: {
 		editProduct(e){
-			const classes = document.querySelector('.product>.edit')
+			e.preventDefault()
+			const classes 	= document.querySelector('.product>.edit')
 			if(classes.classList.contains('hidden')){
 				classes.classList.remove('hidden')
-				this.edit = this.products.find((data) => data.id === e.target.dataset.id)
+				this.edit 	= this.products.find((data) => data.id === e.target.dataset.id)
 			}else{
-				classes.classList.add('hidden')
+				const products 	= db.collection('products').doc(this.edit.id)
+				products.update({
+					name: this.edit.name,
+					price: this.edit.price,
+					stock: this.edit.stock,
+					description: this.edit.description,
+				}).then(() => {
+					classes.classList.add('hidden')
+					if(this.editImg){
+						var edit = storage.ref(`/images/${this.editImg.name}`).put(this.editImg)
+						edit.then((snapshot) => {
+							snapshot.ref.getDownloadURL().then(url => {
+								console.log(url)
+								products.update({img: url})
+							})
+						})
+					}
+					else if(this.editImgPreview.length >= 1){
+						var listFilePreview = []
+						this.editImgPreview.forEach((data) => {
+							var preview = storage.ref(`/images/${data.name}`).put(data)
+							preview.then((snapshot) => {
+								snapshot.ref.getDownloadURL().then(url => {
+									console.log(url)
+									listFilePreview = [...listFilePreview, url]
+									console.log(listFilePreview, this.editImgPreview.length)
+									if(listFilePreview.length === this.editImgPreview.length){
+										console.log(listFilePreview)
+										products.update({imgPreview: listFilePreview})
+									}
+								})
+							})
+						})
+					}
+				})
 			}
 		},
 		deleteProduct(e){
@@ -163,7 +202,23 @@ export default{
 					this.products = this.products.filter((data) => data.id !== this.keyDelete)
 				})
 			}
-		}
+		},
+		open(e){
+			if(e.target.dataset.type == 'img'){
+				document.querySelector('input[name="edit.img"]').click()
+			}else{
+				document.querySelector('input[name="edit.imgPreview"]').click()
+			}
+		},
+		openImg(e){
+			if(e.target.name === 'edit.img'){
+				this.editImg = e.target.files[0]
+			}else{
+				e.target.files.forEach((data) => {
+					this.editImgPreview.push(data)
+				})
+			}
+		},
 	}
 }
 </script>
