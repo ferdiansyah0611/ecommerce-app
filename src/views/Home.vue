@@ -3,8 +3,8 @@
 		<CardProduct v-for="(data, key) in item" v-bind:key="key" :data="data"></CardProduct>
 	</div>
 	<div class="flex justify-center p-4 space-x-1">
-		<button class="p-3 font-medium bg-blue-400 text-white focus:outline-none focus:ring focus:ring-blue-300">Previous</button>
-		<button class="p-3 font-medium bg-blue-400 text-white focus:outline-none focus:ring focus:ring-blue-300">Next</button>
+		<button class="p-2 sm:p-3 font-medium bg-blue-400 text-white focus:outline-none focus:ring focus:ring-blue-300">Previous</button>
+		<button class="p-2 sm:p-3 font-medium bg-blue-400 text-white focus:outline-none focus:ring focus:ring-blue-300">Next</button>
 	</div>
 </template>
 
