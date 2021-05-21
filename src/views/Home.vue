@@ -1,10 +1,10 @@
 <template>
-	<div class="grid grid-cols-2 md:grid-cols-4 grid-flow-row gap-x-3 gap-y-4">
+	<div class="grid grid-cols-1 md:grid-cols-4 grid-flow-row gap-x-3 gap-y-4">
 		<CardProduct v-for="(data, key) in item" v-bind:key="key" :data="data"></CardProduct>
 	</div>
 	<div class="flex justify-center p-4 space-x-1">
-		<button class="p-2 sm:p-3 font-medium bg-blue-400 text-white focus:outline-none focus:ring focus:ring-blue-300">Previous</button>
-		<button class="p-2 sm:p-3 font-medium bg-blue-400 text-white focus:outline-none focus:ring focus:ring-blue-300">Next</button>
+		<button @click="previousPaginate" class="p-2 rounded sm:p-3 font-medium bg-blue-400 text-white focus:outline-none focus:ring focus:ring-blue-300">Previous</button>
+		<button @click="nextPaginate" class="p-2 rounded sm:p-3 font-medium bg-blue-400 text-white focus:outline-none focus:ring focus:ring-blue-300">Next</button>
 	</div>
 </template>
 
@@ -43,6 +43,14 @@ export default {
 			}
 			})
 		}*/
+	},
+	methods: {
+		nextPaginate(){
+			this.$store.commit('nextProduct')
+		},
+		previousPaginate(){
+			this.$store.commit('previousProduct')
+		}
 	}
 }
 </script>
