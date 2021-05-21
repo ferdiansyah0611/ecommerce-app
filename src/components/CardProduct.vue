@@ -16,8 +16,8 @@
 			</div>
 		</div>
 		<div class="flex flex-wrap">
-			<button @click="addCart" class="p-2 w-full lg:w-1/2 bg-blue-500 hover:bg-blue-600 transition-all duration-300 text-white text-sm md:text-base font-medium focus:outline-none focus:ring focus:ring-blue-500">Add to cart</button>
-			<button class="p-2 w-full lg:w-1/2 bg-gray-500 hover:bg-gray-600 transition-all duration-300 text-white text-sm md:text-base font-medium focus:outline-none focus:ring focus:ring-gray-500">Buy Now</button>
+			<button @click="addCart" class="p-2 w-1/2 bg-blue-500 hover:bg-blue-600 transition-all duration-300 text-white text-sm md:text-base font-medium focus:outline-none focus:ring focus:ring-blue-500">Add to cart</button>
+			<button class="p-2 w-1/2 bg-gray-500 hover:bg-gray-600 transition-all duration-300 text-white text-sm md:text-base font-medium focus:outline-none focus:ring focus:ring-gray-500">Buy Now</button>
 		</div>
 	</div>
 </template>
