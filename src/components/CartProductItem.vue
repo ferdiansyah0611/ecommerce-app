@@ -26,8 +26,8 @@ export default{
 	data(){
 		return{
 			total: 1,
-			price: this.data.price,
-			defaultPrice: this.data.price
+			price: Number(this.data.price),
+			defaultPrice: Number(this.data.price)
 		}
 	},
 	methods: {
