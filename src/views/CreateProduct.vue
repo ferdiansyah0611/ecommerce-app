@@ -8,7 +8,7 @@
 			<input v-model="price" class="p-3 border w-full focus:outline-none mt-3" type="number" placeholder="Price">
 			<input v-model="stock" class="p-3 border w-full focus:outline-none mt-3" type="number" placeholder="Stock">
 			<textarea v-model="description" class="p-3 border w-full focus:outline-none mt-3" placeholder="Description"></textarea>
-			<select @change="changeCategory" class="p-3 border w-full focus:outline-none">
+			<select @change="changeCategory" class="p-3 border bg-white w-full focus:outline-none">
 				<option value="" disabled selected>Select Category</option>
 				<option v-for="(data, key) in categories" v-bind:key="key" :value="data.name">{{data.name}}</option>
 			</select>
