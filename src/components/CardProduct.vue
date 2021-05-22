@@ -3,7 +3,9 @@
 		<h5 class="font-bold text-center mb-2">
 			<router-link :to="{path: '/products/' + data.id}" class="hover:underline">{{data.name}}</router-link>
 		</h5>
-		<img :src="data.img" alt="image">
+		<div class="flex justify-center">
+			<img :src="data.img" alt="image">
+		</div>
 		<p class="text-sm mt-2">{{data.description}}</p>
 		<div class="flex flex-wrap mb-2 mt-2">
 			<div class="flex w-full">
@@ -17,11 +19,12 @@
 		</div>
 		<div class="flex flex-wrap">
 			<button @click="addCart" class="p-2 w-1/2 bg-blue-500 hover:bg-blue-600 transition-all duration-300 text-white text-sm md:text-base font-medium focus:outline-none focus:ring focus:ring-blue-500">Add to cart</button>
-			<button class="p-2 w-1/2 bg-gray-500 hover:bg-gray-600 transition-all duration-300 text-white text-sm md:text-base font-medium focus:outline-none focus:ring focus:ring-gray-500">Buy Now</button>
+			<button @click="checkout" class="p-2 w-1/2 bg-gray-500 hover:bg-gray-600 transition-all duration-300 text-white text-sm md:text-base font-medium focus:outline-none focus:ring focus:ring-gray-500">Buy Now</button>
 		</div>
 	</div>
 </template>
 <script>
+import {auth} from '@/firebase'
 export default{
 	name: 'CardProduct',
 	props: ['data'],
@@ -40,6 +43,31 @@ export default{
 				this.$store.commit('removeCart', this.data.id)
 				this.txtAddCart = false
 			}
+		},
+		checkout(){
+			fetch(process.env.VUE_APP_URLSERVER + 'checkout', {
+				method: 'post',
+				body: JSON.stringify({
+					name: auth.currentUser.displayName,
+					email: auth.currentUser.email,
+					price: Number(this.data.price)
+				}),
+				headers: {
+					"Content-Type": "application/json"
+				}
+			}).then(response => response.json()).then(response => {
+				window.snap.pay(response.token, {
+					onSuccess: function() {
+						alert('Successfuly Payment Product');
+					},
+					onPending: function() {
+						alert('On Pending Payment Product');
+					},
+					onError: function() {
+						console.log('error');
+					}
+				})
+			})
 		}
 	}
 }
