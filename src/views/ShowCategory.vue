@@ -25,10 +25,12 @@ export default {
 		}
 	},
 	created(){
-		document.title = 'The Best Ecommerce Platform | 0611 Store'
+		document.title = `Category ${this.$route.params.id} | 0611 Store`
+		this.id = this.$route.params.id
 	},
-	updated(){
-		this.mounted()
+	beforeRouteUpdate(to, from, next){
+		this.id = to.params.id
+		next()
 	},
 	computed: {
 		item: {
@@ -38,20 +40,7 @@ export default {
 		}
 	},
 	mounted(){
-		this.id = this.$route.params.id
-		for (var i = 0; i < 8; i++) {
-			this.$store.commit('addData', {
-				name: 'item',
-				data: {
-				id: Math.floor(Math.random() * 1000000),
-				name: 'My Product',
-				img: '/emil-widlund-xrbbXIXAWY0-unsplash.jpg',
-				price: 1000000,
-				category: 'Computer',
-				description: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Numquam rem, sunt nisi eum. At harum odit et id perferendis temporibus aliquid ratione omnis. Maxime cupiditate veniam modi nihil? Libero, corporis.'
-			}
-			})
-		}
+		this.$store.commit('whereProducts', {where: 'categories', value: this.id})
 	}
 }
 </script>

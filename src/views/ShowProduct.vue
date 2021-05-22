@@ -104,6 +104,10 @@ export default{
 		db.collection('products').doc(this.$route.params.id).get().then(result => this.product = result.data())
 		this.fetchComment()
 	},
+	beforeRouteUpdate(to, from, next){
+		this.getContent(to.params.id)
+		next()
+	},
 	methods: {
 		fetchComment(){
 			db.collection('comments').where('product_id', '==', this.$route.params.id).get().then(result => {

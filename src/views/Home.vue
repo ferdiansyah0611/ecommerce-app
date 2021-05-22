@@ -1,5 +1,5 @@
 <template>
-	<div class="grid grid-cols-1 md:grid-cols-4 grid-flow-row gap-x-3 gap-y-4">
+	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 grid-flow-row gap-x-3 gap-y-4">
 		<CardProduct v-for="(data, key) in item" v-bind:key="key" :data="data"></CardProduct>
 	</div>
 	<div class="flex justify-center p-4 space-x-1">
