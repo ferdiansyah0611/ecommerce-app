@@ -1,8 +1,6 @@
 import { createStore } from 'vuex'
 import {db, storage, firebase} from '@/firebase'
 
-window.db = db
-
 export default createStore({
   state: {
     cart: [],
@@ -22,6 +20,11 @@ export default createStore({
       }else{
         products.get().then(res => res.forEach(data => state.item = [...state.item, data.data()]))
       }
+    },
+    whereProducts(state, data){
+      state.item = []
+      const products = db.collection('products').where(data.where, '==', data.value).orderBy('created', 'desc').endAt(8)
+      products.get().then(res => res.forEach(data => state.item = [...state.item, data.data()]))
     },
     nextProduct(state){
       console.log(state.pagination.start + 8)
